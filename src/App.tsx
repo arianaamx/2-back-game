@@ -1,26 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import styled from "styled-components";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import * as colors from "./utils/theme";
+
+import StartPage from "./components/start-page";
+import Game from "./components/game";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppWrapper>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <StartPage />
+          </Route>
+          <Route path="/game">
+            <Game />
+          </Route>
+        </Switch>
+      </Router>
+    </AppWrapper>
   );
 }
 
 export default App;
+
+const AppWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
+
+  * {
+    font-family: "Merriweather";
+    margin: 0;
+    padding: 0;
+  }
+
+  button {
+    padding: 5px 20px;
+    margin: 5px;
+    background-color: ${colors.lighterLilac};
+    border: 2px solid ${colors.lilac};
+    border-radius: 15px;
+    font-size: 20px;
+  }
+`;
