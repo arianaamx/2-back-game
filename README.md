@@ -4,7 +4,7 @@ A responsive web app written with ReactJS library that displays a game called 2-
 
 The 2-back-game is a classical experimental psychology task which measures working memory (more [here](https://en.wikipedia.org/wiki/N-back))
 
-The DEMO is located here: [2-back-game](https://2-back-game.vercel.app/game)
+The DEMO is located here: [2-back-game](https://2-back-game.vercel.app/)
 
 ## Downloading and starting the app
 
