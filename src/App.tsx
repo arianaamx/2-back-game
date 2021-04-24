@@ -31,13 +31,8 @@ const AppWrapper = styled.div`
   justify-content: center;
   align-items: center;
 
-  height: 100vh;
-
-  * {
-    font-family: "Merriweather";
-    margin: 0;
-    padding: 0;
-  }
+  height: 100%;
+  min-height: 90vh;
 
   button {
     padding: 5px 20px;
