@@ -37,8 +37,8 @@ const Description = styled.div`
 
   border: 1px solid ${colors.lightLilac};
   border-radius: 15px;
-  margin: 10px;
   padding: 20px;
+  margin: 20px;
 
   p {
     padding-bottom: 20px;
