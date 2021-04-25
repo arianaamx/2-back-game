@@ -30,6 +30,8 @@ const StartPage = () => {
 export default StartPage;
 
 const Description = styled.div`
+  padding: 20px 0;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -37,8 +39,6 @@ const Description = styled.div`
 
   border: 1px solid ${colors.lightLilac};
   border-radius: 15px;
-  padding: 20px;
-  margin: 20px;
 
   p {
     padding-bottom: 20px;
