@@ -16,7 +16,10 @@ const Game = () => {
   const solution = Array.from(gameArray, (x, index) => (gameArray[index] === gameArray[index - 2] ? true : false));
 
   const [gameInPlay, setGameInPlay] = useState(false);
+
   const [gameOver, setGameOver] = useState(false);
+  const gameOverRef = useRef<boolean>(gameOver);
+  gameOverRef.current = gameOver;
 
   const [displayedLetter, setDisplayedLetter] = useState<string>(gameArray[0]);
   const displayedLetterRef = useRef<string>(displayedLetter);
@@ -26,28 +29,28 @@ const Game = () => {
   const answerRef = useRef<Answer[]>(answer);
   answerRef.current = answer;
 
-  useEffect(() => {
-    const spaceHandler = ({ key }: KeyboardEvent) => {
-      if (key === " ") {
-        if (answerRef.current.length === 0) {
-          setAnswer([{ timePassed: Date.now() }]);
-          setGameInPlay(true);
-        } else {
-          const time = Date.now() - answerRef.current[0].timePassed;
-          const indexOfLetter = Math.floor(time / 2000);
-          setAnswer([
-            ...answerRef.current,
-            {
-              timePassed: Date.now() - answerRef.current[0].timePassed,
-              letter: displayedLetterRef.current,
-              indexOfLetter,
-              isAnswerGood: solution[indexOfLetter - 1],
-            },
-          ]);
-        }
+  const spaceHandler = ({ key }: KeyboardEvent) => {
+    if (key === " ") {
+      if (answerRef.current.length === 0) {
+        setAnswer([{ timePassed: Date.now() }]);
+        setGameInPlay(true);
+      } else if (gameOverRef.current !== true) {
+        const time = Date.now() - answerRef.current[0].timePassed;
+        const indexOfLetter = Math.floor(time / 2000);
+        setAnswer([
+          ...answerRef.current,
+          {
+            timePassed: Date.now() - answerRef.current[0].timePassed,
+            letter: displayedLetterRef.current,
+            indexOfLetter,
+            isAnswerGood: solution[indexOfLetter],
+          },
+        ]);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     window.addEventListener("keydown", spaceHandler);
 
     return () => {
@@ -63,9 +66,10 @@ const Game = () => {
         if (i < 15) {
           setDisplayedLetter(gameArray[i]);
         } else {
-          clearInterval(interval);
           setGameInPlay(false);
           setGameOver(true);
+          window.removeEventListener("keydown", spaceHandler);
+          clearInterval(interval);
         }
       }, 2000);
     }
@@ -76,11 +80,7 @@ const Game = () => {
       {gameInPlay === false && gameOver === false && <h2> Press SPACE to start</h2>}
       {gameInPlay === true && (
         <div>
-          Array of given letters:
-          {gameArray.map((element) => {
-            return <span>{element} </span>;
-          })}
-          GAME PLAYING:<DisplayedLetter gameBegins={gameInPlay}> {displayedLetter} </DisplayedLetter>
+          <DisplayedLetter gameBegins={gameInPlay}> {displayedLetter} </DisplayedLetter>
         </div>
       )}
       {gameInPlay === false && answer.length > 0 && (
@@ -118,18 +118,22 @@ const Game = () => {
                 <th>Answer</th>
               </tr>
             </thead>
-            {answer.map((element, index) => {
-              return (
-                index !== 0 && (
-                  <tr>
-                    <td>{element.indexOfLetter}</td>
-                    <td>{element.letter}</td>
-                    <td>{element.timePassed - element.indexOfLetter! * 2000}</td>
-                    <td>{element.isAnswerGood ? "GOOD" : "WRONG"}</td>
-                  </tr>
-                )
-              );
-            })}
+            <tbody>
+              {answer.map((element, index) => {
+                return (
+                  index !== 0 && (
+                    <tr>
+                      <td>{element.indexOfLetter! + 1}</td>
+                      <td>{element.letter}</td>
+                      <td>{element.timePassed - element.indexOfLetter! * 2000} ms</td>
+                      <AnswerCell isAnswerGood={element.isAnswerGood!}>
+                        {element.isAnswerGood ? "GOOD" : "WRONG"}
+                      </AnswerCell>
+                    </tr>
+                  )
+                );
+              })}
+            </tbody>
           </table>
         </Statistics>
       )}
@@ -147,7 +151,7 @@ const DisplayedLetter = styled.div<DisplayLetterProps>`
   ${(props) =>
     props.gameBegins
       ? css`
-          animation-delay: 0.5s;
+          animation-delay: 0.2s;
           animation: blinker 2s step-end infinite;
           font-size: 100px;
 
@@ -212,5 +216,20 @@ const SolutionCell = styled.td<SolutionCellInterface>`
         `
       : css`
           background-color: ${colors.pastelRed};
+        `}
+`;
+
+interface AnswerCellInterface {
+  isAnswerGood: boolean;
+}
+
+const AnswerCell = styled.td<AnswerCellInterface>`
+  ${(props) =>
+    props.isAnswerGood
+      ? css`
+          color: ${colors.pastelGreen};
+        `
+      : css`
+          color: ${colors.pastelRed};
         `}
 `;
